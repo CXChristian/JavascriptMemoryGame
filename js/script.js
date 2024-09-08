@@ -37,11 +37,10 @@ class Game{
         this.windowHeight = window.outerHeight - uiHeight;
     }
 
-    setupGameWindow(uiHandler){
-        const uiHeight = uiHandler.startDiv.offsetHeight;
+    setupGameWindow(uiHeight){
         this.gameDiv.style.display = "block";
-        this.windowWidth = window.outerWidth;
-        this.windowHeight = window.outerHeight - uiHeight;
+        this.windowWidth = window.innerWidth;
+        this.windowHeight = window.innerHeight - uiHeight;
         this.gameDiv.style.width = this.windowWidth + "px";
         this.gameDiv.style.height = this.windowHeight + "px"; 
     }
@@ -53,8 +52,7 @@ class Game{
         }
     }
 
-    lineButtons(buttonArray, uiHandler){
-        this.setupGameWindow(uiHandler);
+    lineButtons(buttonArray){
         this.gameDiv.style.display = "flex";
         this.gameDiv.style.flexDirection = "row";
         this.gameDiv.style.flexWrap = "wrap";
@@ -88,14 +86,14 @@ class Game{
         return new Promise((resolve) => {
             let buttonsDiv = document.querySelectorAll('#gameWindow > div');       
             let scramble = setInterval(() => { 
-                this.setupGameWindow(uiHandler)
+                this.setupGameWindow(uiHeight)
                 // Logic to keep each button within window
                 buttonsDiv.forEach((buttonDiv) => {
                     buttonDiv.style.position = "absolute";
                     let buttonWidth = parseFloat(buttonDiv.style.width) * parseFloat(buttonDiv.style.fontSize);
                     let buttonHeight = parseFloat(buttonDiv.style.height) * parseFloat(buttonDiv.style.fontSize);
-                    buttonDiv.style.top = Math.floor(Math.random() * (this.windowHeight - buttonHeight - uiHeight) + uiHeight) + "px";
-                    buttonDiv.style.left = Math.floor(Math.random() * (this.windowWidth - buttonWidth - uiHeight) + uiHeight) + "px";
+                    buttonDiv.style.top = Math.floor(Math.random() * (this.windowHeight - buttonHeight)) + uiHeight + "px";
+                    buttonDiv.style.left = Math.floor(Math.random() * (this.windowWidth - buttonWidth)) + "px";
                 });
             }, 1000);
             
@@ -201,7 +199,7 @@ async function run() {
     let userInput = await uiHandler.retrieveInput();
     let buttonArray = Button.createButtonArr(userInput);
 
-    game.lineButtons(buttonArray, uiHandler);
+    game.lineButtons(buttonArray);
     await new Promise(resolve => setTimeout(resolve, userInput * 1000)); // Wait for n seconds
     
     await game.scrambleButtons(uiHandler);
